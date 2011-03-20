@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd"
+	xmlns:context="http://www.springframework.org/schema/context">
+
+	 <http use-expressions="true">
+	    <intercept-url pattern="/resources/**" filters="none"/>
+	    <intercept-url pattern="/app/login.do" access="permitAll()" filters="none" />
+	    <intercept-url pattern="/**" access="isAuthenticated()" />
+        <form-login login-page="/app/login.do" 
+        			authentication-success-handler-ref="loginSuccessHandler" 
+        			authentication-failure-handler-ref="loginFailureHandler" />
+        <logout invalidate-session="true" logout-success-url="/" logout-url="/j_spring_security_logout"/>
+        <remember-me key="xaab.springmvclogin" />
+        <session-management session-fixation-protection="newSession" >
+            <concurrency-control max-sessions="1" error-if-maximum-exceeded="false"/>
+        </session-management>
+	 </http>
+
+    <authentication-manager>
+        <authentication-provider>
+        	<password-encoder hash="md5" />
+            <user-service>
+                <user name="user1" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER" />
+                <user name="user2" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER,ROLE_TELLER" />
+                <user name="user3" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
+                <user name="user4" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+	 
+	 <beans:bean id="loginSuccessHandler" class="org.xaab.springmvc.LoginSuccessHandler" />
+	 <beans:bean id="loginFailureHandler" class="org.xaab.springmvc.LoginFailureHandler" />
+</beans:beans>
